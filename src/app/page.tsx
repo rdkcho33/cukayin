@@ -29,8 +29,14 @@ export default function Home() {
       const { data: transData } = await supabase.from('transactions').select('*').order('created_at', { ascending: true })
 
       if (eventData && eventData.length > 0) {
-        setEvents(eventData)
-        // Set active tab to first event if it's currently at default
+        const enrichedEvents = eventData.map(event => {
+          const eventCategories = (catData || []).filter(c => c.event_id === event.id)
+          const totalSaved = eventCategories.reduce((sum, c) => sum + (parseFloat(c.allocated_amount) || 0), 0)
+          const targetAmount = eventCategories.reduce((sum, c) => sum + (parseFloat(c.target_amount) || 0), 0)
+          return { ...event, total_saved: totalSaved, target_amount: targetAmount }
+        })
+        
+        setEvents(enrichedEvents)
         if (activeTab === "lamaran" || activeTab === "wedding") {
           setActiveTab(eventData[0].id)
         }

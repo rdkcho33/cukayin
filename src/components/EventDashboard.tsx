@@ -38,12 +38,18 @@ export function EventDashboard({ event }: EventDashboardProps) {
     )
   }
 
-  const percentage = Math.min(100, Math.round(((event.total_saved || 0) / (event.target_amount || 1)) * 100))
-  const remaining = Math.max(0, (event.target_amount || 0) - (event.total_saved || 0))
+  const totalSaved = event.total_saved || 0
+  const targetAmount = event.target_amount || 0
+  
+  const percentage = targetAmount > 0 
+    ? Math.min(100, Math.round((totalSaved / targetAmount) * 100)) 
+    : 0
+  
+  const remaining = Math.max(0, targetAmount - totalSaved)
 
   const chartData = [
-    { name: "Saved", value: event.total_saved || 0, fill: "var(--primary)" },
-    { name: "Remaining", value: remaining, fill: "var(--secondary)" },
+    { name: "Saved", value: totalSaved || 0.001, fill: "var(--primary)" },
+    { name: "Remaining", value: remaining || 0.001, fill: "var(--secondary)" },
   ]
 
   return (
