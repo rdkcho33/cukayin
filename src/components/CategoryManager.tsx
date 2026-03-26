@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 
 import { AddCategoryDialog } from "./AddCategoryDialog"
+import { EditCategoryDialog } from "./EditCategoryDialog"
 import { supabase } from "@/lib/supabase"
 import { formatCurrency } from "@/lib/utils"
 
@@ -59,7 +60,8 @@ export function CategoryManager({ categories, eventId, onRefresh }: CategoryMana
                     </Badge>
                   </div>
                 </div>
-                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex gap-1">
+                  <EditCategoryDialog category={category} onSuccess={onRefresh} />
                   <Button variant="ghost" size="icon" onClick={() => handleDelete(category.id)} className="h-8 w-8 text-muted-foreground hover:text-destructive">
                     <Trash2 className="h-4 w-4" />
                   </Button>
