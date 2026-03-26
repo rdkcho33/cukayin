@@ -12,6 +12,8 @@ import { AddTransactionForm } from "@/components/AddTransactionForm"
 import { Card } from "@/components/ui/card"
 import { supabase } from "@/lib/supabase"
 
+import { AddEventDialog } from "@/components/AddEventDialog"
+
 export default function Home() {
   const [events, setEvents] = React.useState<any[]>([])
   const [categories, setCategories] = React.useState<any[]>([])
@@ -20,9 +22,9 @@ export default function Home() {
 
   const fetchData = async () => {
     try {
-      const { data: eventData } = await supabase.from('events').select('*')
-      const { data: catData } = await supabase.from('categories').select('*')
-      const { data: transData } = await supabase.from('transactions').select('*')
+      const { data: eventData } = await supabase.from('events').select('*').order('created_at', { ascending: true })
+      const { data: catData } = await supabase.from('categories').select('*').order('created_at', { ascending: true })
+      const { data: transData } = await supabase.from('transactions').select('*').order('created_at', { ascending: true })
 
       if (eventData) setEvents(eventData)
       if (catData) setCategories(catData)
@@ -35,7 +37,6 @@ export default function Home() {
   React.useEffect(() => {
     fetchData()
 
-    // Realtime channel
     const channel = supabase
       .channel('schema-db-changes')
       .on('postgres_changes', { event: '*', schema: 'public' }, () => {
@@ -101,23 +102,23 @@ export default function Home() {
             </h2>
             <p className="text-muted-foreground">Siap untuk melangkah ke jenjang berikutnya hari ini?</p>
           </div>
-          <div className="flex items-center gap-2 bg-white/50 p-1 rounded-full border border-primary/10">
-            <Button size="sm" className="rounded-full bg-primary text-white px-6">Dashboard</Button>
-            <Button size="sm" variant="ghost" className="rounded-full text-muted-foreground px-6 hover:text-primary">Riwayat</Button>
+          <div className="flex items-center gap-2">
+             <AddEventDialog onSuccess={fetchData} />
+             <Button variant="outline" className="rounded-full px-6 border-primary/20 text-primary hover:bg-primary/5">Pengaturan</Button>
           </div>
         </div>
 
-        <Tabs defaultValue="lamaran" className="w-full">
+        <Tabs defaultValue={events[0]?.id || "lamaran"} className="w-full">
           <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8 bg-secondary/50 rounded-full p-1 h-12">
-            <TabsTrigger value="lamaran" className="rounded-full data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all font-serif">
-              Lamaran (Pertunangan)
+            <TabsTrigger value={events[0]?.id || "lamaran"} className="rounded-full data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all font-serif">
+              {events[0]?.name || "Acara 1"}
             </TabsTrigger>
-            <TabsTrigger value="wedding" className="rounded-full data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all font-serif">
-              Wedding (Pernikahan)
+            <TabsTrigger value={events[1]?.id || "wedding"} className="rounded-full data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all font-serif">
+              {events[1]?.name || "Acara 2"}
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="lamaran" className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <TabsContent value={events[0]?.id || "lamaran"} className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {events[0] ? (
               <>
                 <EventDashboard event={events[0]} />
@@ -125,9 +126,8 @@ export default function Home() {
                   <div className="lg:col-span-2 space-y-8">
                     <CategoryManager 
                       categories={categories.filter(c => c.event_id === events[0].id)} 
-                      onAdd={() => {}} 
-                      onEdit={() => {}} 
-                      onDelete={() => {}} 
+                      eventId={events[0].id}
+                      onRefresh={fetchData}
                     />
                     <SavingsLog transactions={transactions.filter(t => t.event_id === events[0].id)} />
                   </div>
@@ -143,13 +143,13 @@ export default function Home() {
             ) : (
               <div className="text-center py-20 bg-white/50 rounded-[3rem] shadow-premium">
                 <Sparkles className="mx-auto h-12 w-12 text-primary/20 mb-4" />
-                <h3 className="text-2xl font-serif text-primary">Belum ada acara Lamaran</h3>
-                <p className="text-muted-foreground mt-2">Tambahkan data "Lamaran" di database untuk mulai melacak.</p>
+                <h3 className="text-2xl font-serif text-primary">Belum ada acara pertama</h3>
+                <p className="text-muted-foreground mt-2">Klik tombol "Buat Acara Baru" di atas untuk memulai.</p>
               </div>
             )}
           </TabsContent>
 
-          <TabsContent value="wedding" className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <TabsContent value={events[1]?.id || "wedding"} className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {events[1] ? (
               <>
                 <EventDashboard event={events[1]} />
@@ -157,9 +157,8 @@ export default function Home() {
                   <div className="lg:col-span-2 space-y-8">
                     <CategoryManager 
                       categories={categories.filter(c => c.event_id === events[1].id)} 
-                      onAdd={() => {}} 
-                      onEdit={() => {}} 
-                      onDelete={() => {}} 
+                      eventId={events[1].id}
+                      onRefresh={fetchData}
                     />
                     <SavingsLog transactions={transactions.filter(t => t.event_id === events[1].id)} />
                   </div>
@@ -171,8 +170,8 @@ export default function Home() {
             ) : (
               <div className="text-center py-20 bg-white/50 rounded-[3rem] shadow-premium">
                 <Sparkles className="mx-auto h-12 w-12 text-primary/20 mb-4" />
-                <h3 className="text-2xl font-serif text-primary">Belum ada acara Pernikahan</h3>
-                <p className="text-muted-foreground mt-2">Tambahkan data "Wedding" di database untuk mulai melacak.</p>
+                <h3 className="text-2xl font-serif text-primary">Belum ada acara kedua</h3>
+                <p className="text-muted-foreground mt-2">Klik tombol "Buat Acara Baru" di atas untuk mulai melacak pernikahan.</p>
               </div>
             )}
           </TabsContent>
