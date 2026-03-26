@@ -73,10 +73,10 @@ export function AddCategoryDialog({ eventId, onSuccess }: AddCategoryDialogProps
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="bg-primary hover:bg-primary/90 text-white rounded-full px-6">
+      <DialogTrigger>
+        <div className="inline-flex items-center justify-center bg-primary hover:bg-primary/90 text-white rounded-full px-6 py-2 cursor-pointer text-sm font-medium">
           <Plus className="mr-2 h-4 w-4" /> Tambah Item
-        </Button>
+        </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] rounded-[2rem] border-none shadow-2xl">
         <DialogHeader>

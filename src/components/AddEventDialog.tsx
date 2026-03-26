@@ -61,10 +61,10 @@ export function AddEventDialog({ onSuccess }: AddEventDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="bg-primary hover:bg-primary/90 text-white rounded-full px-8 py-6 text-lg font-serif">
+      <DialogTrigger>
+        <div className="inline-flex items-center justify-center bg-primary hover:bg-primary/90 text-white rounded-full px-8 py-4 text-lg font-serif cursor-pointer">
           <PlusCircle className="mr-2 h-5 w-5" /> Buat Acara Baru
-        </Button>
+        </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] rounded-[2rem] border-none shadow-2xl">
         <DialogHeader>
