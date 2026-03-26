@@ -20,13 +20,21 @@ export default function Home() {
   const [transactions, setTransactions] = React.useState<any[]>([])
   const [loading, setLoading] = React.useState(true)
 
+  const [activeTab, setActiveTab] = React.useState<string>("lamaran")
+
   const fetchData = async () => {
     try {
       const { data: eventData } = await supabase.from('events').select('*').order('created_at', { ascending: true })
       const { data: catData } = await supabase.from('categories').select('*').order('created_at', { ascending: true })
       const { data: transData } = await supabase.from('transactions').select('*').order('created_at', { ascending: true })
 
-      if (eventData) setEvents(eventData)
+      if (eventData && eventData.length > 0) {
+        setEvents(eventData)
+        // Set active tab to first event if it's currently at default
+        if (activeTab === "lamaran" || activeTab === "wedding") {
+          setActiveTab(eventData[0].id)
+        }
+      }
       if (catData) setCategories(catData)
       if (transData) setTransactions(transData)
     } finally {
@@ -108,7 +116,7 @@ export default function Home() {
           </div>
         </div>
 
-        <Tabs defaultValue={events[0]?.id || "lamaran"} className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full" key={events.length}>
           <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8 bg-secondary/50 rounded-full p-1 h-12">
             <TabsTrigger value={events[0]?.id || "lamaran"} className="rounded-full data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all font-serif">
               {events[0]?.name || "Acara 1"}
