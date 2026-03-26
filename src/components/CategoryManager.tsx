@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 
 import { AddCategoryDialog } from "./AddCategoryDialog"
 import { supabase } from "@/lib/supabase"
+import { formatCurrency } from "@/lib/utils"
 
 interface Category {
   id: string
@@ -66,8 +67,8 @@ export function CategoryManager({ categories, eventId, onRefresh }: CategoryMana
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between text-xs font-medium">
-                  <span className="text-muted-foreground">Terkumpul: Rp {(category.allocated_amount || 0).toLocaleString("id-ID")}</span>
-                  <span className="text-primary">Target: Rp {(category.target_amount || 0).toLocaleString("id-ID")}</span>
+                  <span className="text-muted-foreground">Terkumpul: Rp {formatCurrency(category.allocated_amount || 0)}</span>
+                  <span className="text-primary">Target: Rp {formatCurrency(category.target_amount || 0)}</span>
                 </div>
                 <Progress value={percentage} className="h-2 bg-secondary" />
               </CardContent>

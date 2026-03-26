@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { formatCurrency } from "@/lib/utils"
 
 interface Transaction {
   id: string
@@ -87,7 +88,7 @@ export function SavingsLog({ transactions }: SavingsLogProps) {
                   <TableCell className="text-sm text-muted-foreground max-w-[200px] truncate">{t.description}</TableCell>
                   <TableCell className="text-right font-bold text-primary">
                     <div className="flex items-center justify-end gap-1">
-                      Rp {t.amount.toLocaleString("id-ID")}
+                      Rp {formatCurrency(t.amount)}
                       <ArrowUpRight className="h-3 w-3 text-green-500" />
                     </div>
                   </TableCell>

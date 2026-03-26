@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
+import { formatCurrency } from "@/lib/utils"
 
 interface EventData {
   id: string
@@ -113,10 +114,10 @@ export function EventDashboard({ event }: EventDashboardProps) {
         </CardContent>
         <CardFooter className="flex-col gap-2 text-sm">
           <div className="flex items-center gap-2 font-medium leading-none text-primary">
-            Target: Rp {event.target_amount.toLocaleString("id-ID")} <TrendingUp className="h-4 w-4" />
+            Target: Rp {formatCurrency(event.target_amount)} <TrendingUp className="h-4 w-4" />
           </div>
           <div className="leading-none text-muted-foreground">
-            Sisa tabungan: Rp {remaining.toLocaleString("id-ID")}
+            Sisa tabungan: Rp {formatCurrency(remaining)}
           </div>
         </CardFooter>
       </Card>
@@ -130,7 +131,7 @@ export function EventDashboard({ event }: EventDashboardProps) {
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="font-medium text-foreground">Total Terkumpul</span>
-              <span className="text-primary font-bold">Rp {event.total_saved.toLocaleString("id-ID")}</span>
+              <span className="text-primary font-bold">Rp {formatCurrency(event.total_saved)}</span>
             </div>
             <Progress value={percentage} className="h-3 bg-secondary" />
           </div>
@@ -139,12 +140,12 @@ export function EventDashboard({ event }: EventDashboardProps) {
             <div className="p-4 rounded-2xl bg-secondary/30 border border-secondary/50 flex flex-col gap-1">
               <Wallet className="h-5 w-5 text-primary mb-1" />
               <span className="text-xs text-muted-foreground uppercase font-semibold">Terkumpul</span>
-              <span className="text-lg font-bold text-primary">Rp {event.total_saved.toLocaleString("id-ID")}</span>
+              <span className="text-lg font-bold text-primary">Rp {formatCurrency(event.total_saved)}</span>
             </div>
             <div className="p-4 rounded-2xl bg-muted/30 border border-muted/50 flex flex-col gap-1">
               <CalendarIcon className="h-5 w-5 text-muted-foreground mb-1" />
               <span className="text-xs text-muted-foreground uppercase font-semibold">Target</span>
-              <span className="text-lg font-bold text-foreground">Rp {event.target_amount.toLocaleString("id-ID")}</span>
+              <span className="text-lg font-bold text-foreground">Rp {formatCurrency(event.target_amount)}</span>
             </div>
           </div>
         </CardContent>

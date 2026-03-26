@@ -18,6 +18,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { supabase } from "@/lib/supabase"
+import { formatCurrency, parseCurrency } from "@/lib/utils"
 
 const formSchema = z.object({
   amount: z.string().min(1, "Jumlah harus diisi"),
@@ -50,7 +51,7 @@ export function AddTransactionForm({ events, categories, onSuccess }: AddTransac
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
-      const amountNum = parseFloat(values.amount)
+      const amountNum = parseCurrency(values.amount)
       
       const { error } = await supabase
         .from('transactions')
@@ -105,10 +106,17 @@ export function AddTransactionForm({ events, categories, onSuccess }: AddTransac
                 <Wallet className="h-3 w-3" /> Jumlah (Rp)
               </Label>
               <Input 
-                placeholder="Contoh: 1000000" 
-                {...register("amount")} 
+                placeholder="Contoh: 1.000.000" 
+                {...register("amount", {
+                  onChange: (e) => {
+                    const value = e.target.value;
+                    const numericValue = value.replace(/\D/g, "");
+                    const formatted = formatCurrency(numericValue);
+                    setValue("amount", formatted);
+                  }
+                })} 
                 className="bg-white/50 border-none rounded-xl" 
-                type="number"
+                type="text"
               />
               {errors.amount && <p className="text-[10px] text-destructive">{errors.amount.message}</p>}
             </div>

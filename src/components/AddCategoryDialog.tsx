@@ -26,6 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { supabase } from "@/lib/supabase"
+import { formatCurrency, parseCurrency } from "@/lib/utils"
 
 const categorySchema = z.object({
   name: z.string().min(1, "Nama kategori harus diisi"),
@@ -56,7 +57,7 @@ export function AddCategoryDialog({ eventId, onSuccess }: AddCategoryDialogProps
         .insert({
           event_id: eventId,
           name: values.name,
-          target_amount: parseFloat(values.target_amount),
+          target_amount: parseCurrency(values.target_amount),
           status: values.status,
           allocated_amount: 0,
         })
@@ -100,9 +101,16 @@ export function AddCategoryDialog({ eventId, onSuccess }: AddCategoryDialogProps
             <Label htmlFor="target_amount" className="text-xs uppercase font-bold text-muted-foreground">Target Anggaran (Rp)</Label>
             <Input 
               id="target_amount" 
-              type="number" 
-              placeholder="Contoh: 15000000" 
-              {...register("target_amount")} 
+              type="text" 
+              placeholder="Contoh: 15.000.000" 
+              {...register("target_amount", {
+                onChange: (e) => {
+                  const value = e.target.value;
+                  const numericValue = value.replace(/\D/g, "");
+                  const formatted = formatCurrency(numericValue);
+                  setValue("target_amount", formatted);
+                }
+              })} 
               className="bg-muted/50 border-none rounded-xl"
             />
             {errors.target_amount && <p className="text-[10px] text-destructive">{errors.target_amount.message}</p>}
