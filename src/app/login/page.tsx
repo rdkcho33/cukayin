@@ -21,16 +21,32 @@ export default function LoginPage() {
     setLoading(true)
     setError(null)
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    console.log("Attempting login...")
+    
+    try {
+      if (!supabase) {
+        throw new Error("Supabase client is not initialized. Please check your environment variables.")
+      }
 
-    if (error) {
-      setError(error.message)
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+      if (error) {
+        console.error("Login Error:", error)
+        setError(error.message)
+        setLoading(false)
+      } else {
+        console.log("Login successful, redirecting...")
+        router.push("/")
+        // Refresh to ensure session is picked up by middleware
+        router.refresh()
+      }
+    } catch (err: any) {
+      console.error("Unexpected Error:", err)
+      setError(err.message || "An unexpected error occurred")
       setLoading(false)
-    } else {
-      router.push("/")
     }
   }
 
