@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { TrendingUp, Wallet, Calendar as CalendarIcon, MoreVertical } from "lucide-react"
+import { TrendingUp, Wallet, Calendar as CalendarIcon, MoreVertical, Sparkles } from "lucide-react"
 import { Label, Pie, PieChart, Cell, ResponsiveContainer } from "recharts"
 
 import {
@@ -28,11 +28,21 @@ interface EventDashboardProps {
 }
 
 export function EventDashboard({ event }: EventDashboardProps) {
-  const percentage = Math.min(100, Math.round((event.total_saved / event.target_amount) * 100))
-  const remaining = Math.max(0, event.target_amount - event.total_saved)
+  if (!event) {
+    return (
+      <Card className="border-none shadow-premium bg-white/50 p-8 flex flex-col items-center justify-center text-center">
+        <Sparkles className="h-12 w-12 text-primary/20 mb-4" />
+        <CardTitle className="text-primary font-serif">Belum ada data acara</CardTitle>
+        <CardDescription>Silakan tambahkan data acara di Supabase untuk memulai.</CardDescription>
+      </Card>
+    )
+  }
+
+  const percentage = Math.min(100, Math.round(((event.total_saved || 0) / (event.target_amount || 1)) * 100))
+  const remaining = Math.max(0, (event.target_amount || 0) - (event.total_saved || 0))
 
   const chartData = [
-    { name: "Saved", value: event.total_saved, fill: "var(--primary)" },
+    { name: "Saved", value: event.total_saved || 0, fill: "var(--primary)" },
     { name: "Remaining", value: remaining, fill: "var(--secondary)" },
   ]
 

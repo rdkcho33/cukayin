@@ -118,43 +118,63 @@ export default function Home() {
           </TabsList>
 
           <TabsContent value="lamaran" className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <EventDashboard event={events[0]} />
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2 space-y-8">
-                <CategoryManager 
-                  categories={categories.filter(c => c.event_id === "1")} 
-                  onAdd={() => {}} 
-                  onEdit={() => {}} 
-                  onDelete={() => {}} 
-                />
-                <SavingsLog transactions={transactions} />
+            {events[0] ? (
+              <>
+                <EventDashboard event={events[0]} />
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  <div className="lg:col-span-2 space-y-8">
+                    <CategoryManager 
+                      categories={categories.filter(c => c.event_id === events[0].id)} 
+                      onAdd={() => {}} 
+                      onEdit={() => {}} 
+                      onDelete={() => {}} 
+                    />
+                    <SavingsLog transactions={transactions.filter(t => t.event_id === events[0].id)} />
+                  </div>
+                  <div className="space-y-8">
+                    <AddTransactionForm events={events} categories={categories} onSuccess={fetchData} />
+                    <Card className="border-none shadow-premium bg-primary/5 p-6 rounded-3xl">
+                      <h4 className="font-serif text-primary text-lg mb-2">Tips Hemat 🕊️</h4>
+                      <p className="text-sm text-primary/70 italic">"Gunakan tema minimalis untuk lamaran agar bajet bisa dialokasikan lebih ke arah pernikahan nanti."</p>
+                    </Card>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-20 bg-white/50 rounded-[3rem] shadow-premium">
+                <Sparkles className="mx-auto h-12 w-12 text-primary/20 mb-4" />
+                <h3 className="text-2xl font-serif text-primary">Belum ada acara Lamaran</h3>
+                <p className="text-muted-foreground mt-2">Tambahkan data "Lamaran" di database untuk mulai melacak.</p>
               </div>
-              <div className="space-y-8">
-                <AddTransactionForm events={events} categories={categories} onSuccess={() => {}} />
-                <Card className="border-none shadow-premium bg-primary/5 p-6 rounded-3xl">
-                  <h4 className="font-serif text-primary text-lg mb-2">Tips Hemat 🕊️</h4>
-                  <p className="text-sm text-primary/70 italic">"Gunakan tema minimalis untuk lamaran agar bajet bisa dialokasikan lebih ke arah pernikahan nanti."</p>
-                </Card>
-              </div>
-            </div>
+            )}
           </TabsContent>
 
           <TabsContent value="wedding" className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <EventDashboard event={events[1]} />
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2 space-y-8">
-                <CategoryManager 
-                  categories={categories.filter(c => c.event_id === "2")} 
-                  onAdd={() => {}} 
-                  onEdit={() => {}} 
-                  onDelete={() => {}} 
-                />
-                <SavingsLog transactions={transactions} />
+            {events[1] ? (
+              <>
+                <EventDashboard event={events[1]} />
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  <div className="lg:col-span-2 space-y-8">
+                    <CategoryManager 
+                      categories={categories.filter(c => c.event_id === events[1].id)} 
+                      onAdd={() => {}} 
+                      onEdit={() => {}} 
+                      onDelete={() => {}} 
+                    />
+                    <SavingsLog transactions={transactions.filter(t => t.event_id === events[1].id)} />
+                  </div>
+                  <div className="space-y-8">
+                    <AddTransactionForm events={events} categories={categories} onSuccess={fetchData} />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-20 bg-white/50 rounded-[3rem] shadow-premium">
+                <Sparkles className="mx-auto h-12 w-12 text-primary/20 mb-4" />
+                <h3 className="text-2xl font-serif text-primary">Belum ada acara Pernikahan</h3>
+                <p className="text-muted-foreground mt-2">Tambahkan data "Wedding" di database untuk mulai melacak.</p>
               </div>
-              <div className="space-y-8">
-                <AddTransactionForm events={events} categories={categories} onSuccess={() => {}} />
-              </div>
-            </div>
+            )}
           </TabsContent>
         </Tabs>
       </section>
